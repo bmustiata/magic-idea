@@ -1,37 +1,31 @@
 package com.germaniumhq.magic_group;
 
-import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
-import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
-import com.intellij.ui.treeStructure.treetable.TreeTable;
-import com.intellij.ui.treeStructure.treetable.TreeTableModel;
-import com.intellij.util.ui.ColumnInfo;
 import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
+import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 
 import javax.swing.*;
 
 public class MainWindow {
-    private JTree tree1;
+    private JTree itemTree;
     private JPanel rootPanel;
-    private JTextField textField1;
+    private JTextField searchTextField;
+    private JButton newButton;
+    private JButton editButton;
+    private JButton removeButton;
+    private JButton findButton;
 
     public void initialize() {
+        DefaultTreeTableModel model = new DefaultTreeTableModel();
+        DefaultMutableTreeTableNode rootNode = new DefaultMutableTreeTableNode("wut");
+        DefaultMutableTreeTableNode a1 = new DefaultMutableTreeTableNode("a1");
+        rootNode.add(a1);
+        a1.add(new DefaultMutableTreeTableNode("x1"));
+        model.setRoot(rootNode);
+
+        itemTree.setModel(model);
     }
 
     public JComponent getContent() {
         return rootPanel;
-    }
-
-    private void createUIComponents() {
-        DefaultMutableTreeTableNode node = new DefaultMutableTreeTableNode();
-        node.add(new DefaultMutableTreeTableNode("x1"));
-        node.add(new DefaultMutableTreeTableNode("x2"));
-        node.add(new DefaultMutableTreeTableNode("x3"));
-
-        TreeTableModel model = new ListTreeTableModel(node, new ColumnInfo[] {
-                new TreeColumnInfo("name"),
-                new TreeColumnInfo("name2"),
-        });
-        tree1 = new TreeTable(model).getTree();
-
     }
 }

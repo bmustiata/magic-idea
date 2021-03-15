@@ -17,7 +17,7 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+        <toolWindow id="Magic Group" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="com.germaniumhq.magic_group.MainWindowFactory"/>
     </extensions>
 
