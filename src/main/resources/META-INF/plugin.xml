@@ -1,0 +1,27 @@
+<idea-plugin>
+    <id>org.example.mgroup2</id>
+    <name>Magic Group for IDEA</name>
+    <vendor email="bogdan.mustiata@gmail.com" url="https://germaniumhq.com">Germanium H.Q. eU</vendor>
+
+    <description><![CDATA[
+      A simple plugin that allows structuring content by meaning, instead of path.
+    ]]></description>
+
+    <change-notes><![CDATA[
+    ]]>
+    </change-notes>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <idea-version since-build="173.0"/>
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="com.germaniumhq.magic_group.MainWindowFactory"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
