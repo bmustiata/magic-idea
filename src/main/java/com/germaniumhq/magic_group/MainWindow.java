@@ -13,6 +13,8 @@ public class MainWindow {
     private JButton editButton;
     private JButton removeButton;
     private JButton findButton;
+    private JTextField textField1;
+    private JEditorPane descriptionPane;
 
     public void initialize() {
         DefaultTreeTableModel model = new DefaultTreeTableModel();
