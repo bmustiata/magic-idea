@@ -1,5 +1,6 @@
 package com.germaniumhq.magic_group;
 
+import com.germaniumhq.magic_group.ui.MainWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
