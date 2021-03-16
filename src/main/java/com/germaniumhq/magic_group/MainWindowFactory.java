@@ -12,7 +12,7 @@ public class MainWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         MainWindow mainWindow = new MainWindow();
-        mainWindow.initialize();
+        mainWindow.initialize(project);
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(mainWindow.getContent(), "", false);
