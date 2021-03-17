@@ -4,18 +4,14 @@ import com.germaniumhq.magic_group.model.Group;
 import com.germaniumhq.magic_group.model.LineReference;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.service.DataLoader;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.pom.Navigatable;
 import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.tree.TreePath;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -27,8 +23,10 @@ public class MainWindow {
     private JButton editButton;
     private JButton removeButton;
     private JButton findButton;
-    private JTextField textField1;
-    private JEditorPane descriptionPane;
+    private JTextField descriptionTextField;
+    private JEditorPane longDescriptionEditorPane;
+
+    private TreeItem selectedTreeItem;
 
     public void initialize(@NotNull Project project) {
         Group rootGroup = DataLoader.INSTANCE.loadRootGroup();
@@ -40,22 +38,65 @@ public class MainWindow {
 
         itemTree.setModel(model);
         itemTree.setCellRenderer(new LabelTreeRenderer());
-        itemTree.setToggleClickCount(0);
 
         itemTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("clicked: " + e.getClickCount());
-                // update the selection + description
+                int rowIndex = itemTree.getRowForLocation(e.getX(), e.getY());
+                System.out.println("row " + rowIndex);
 
-                if (e.getClickCount() == 2) {
-                    e.consume();
-                    @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/mgroup2/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
-                    @NotNull Navigatable item = new OpenFileDescriptor(project, file, 10, 0);
-                    item.navigate(true);
+                if (rowIndex >= 0) { // if we have an actual row
+                    TreePath path = itemTree.getPathForRow(rowIndex);
+                    DefaultMutableTreeTableNode selectedNode = (DefaultMutableTreeTableNode) path.getLastPathComponent();
+                    setSelectedTreeItem((TreeItem) selectedNode.getValueAt(0));
+                } else {
+                    System.out.println("clear selection");
+                    itemTree.clearSelection();
+                    setSelectedTreeItem(null);
+                }
+
+                if (e.getClickCount() == 2 && selectedTreeItem != null) {
+                    FileOpener.openFile(project, selectedTreeItem);
                 }
             }
         });
+
+        descriptionTextField.getDocument().addDocumentListener((ChangeListener) content -> {
+            if (selectedTreeItem == null) {
+                return;
+            }
+            selectedTreeItem.setDescription(content);
+        });
+
+        longDescriptionEditorPane.getDocument().addDocumentListener((ChangeListener) content -> {
+            if (selectedTreeItem == null) {
+                return;
+            }
+
+            selectedTreeItem.setLongDescription(content);
+        });
+    }
+
+    private void setSelectedTreeItem(TreeItem treeItem) {
+        this.selectedTreeItem = treeItem;
+
+        if (treeItem == null) {
+            descriptionTextField.setEnabled(false);
+            descriptionTextField.setText("");
+            longDescriptionEditorPane.setEnabled(false);
+            longDescriptionEditorPane.setText("");
+            removeButton.setEnabled(false);
+            editButton.setEnabled(false);
+
+            return;
+        }
+
+        descriptionTextField.setEnabled(true);
+        descriptionTextField.setText(treeItem.getDescription());
+        longDescriptionEditorPane.setEnabled(true);
+        longDescriptionEditorPane.setText(treeItem.getLongDescription());
+        removeButton.setEnabled(true);
+        editButton.setEnabled(true);
     }
 
     private DefaultMutableTreeTableNode createGroupNode(Group group) {

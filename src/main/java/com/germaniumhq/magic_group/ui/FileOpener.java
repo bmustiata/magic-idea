@@ -1,0 +1,17 @@
+package com.germaniumhq.magic_group.ui;
+
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.pom.Navigatable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class FileOpener {
+    public static void openFile(@NotNull Project project, TreeItem selectedTreeItem) {
+        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/mgroup2/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
+        @NotNull Navigatable item = new OpenFileDescriptor(project, file, 10, 0);
+        item.navigate(true);
+    }
+}
