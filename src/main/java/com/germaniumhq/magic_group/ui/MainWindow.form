@@ -86,8 +86,8 @@
           </grid>
         </constraints>
         <properties>
-          <contentType value="text/html"/>
-          <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;    &#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;    fire &lt;b&gt;custom&lt;/b&gt; stuff&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+          <contentType value="text/plain"/>
+          <text value=""/>
         </properties>
       </component>
     </children>

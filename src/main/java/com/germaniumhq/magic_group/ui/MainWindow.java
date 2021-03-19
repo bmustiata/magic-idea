@@ -42,17 +42,19 @@ public class MainWindow {
         itemTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int rowIndex = itemTree.getRowForLocation(e.getX(), e.getY());
-                System.out.println("row " + rowIndex);
+                TreePath path = itemTree.getPathForLocation(e.getX(), e.getY());
 
-                if (rowIndex >= 0) { // if we have an actual row
-                    TreePath path = itemTree.getPathForRow(rowIndex);
+                if (path != null) {
+                    for (Object item: path.getPath()) {
+                        System.out.println(item);
+                    }
+                } else {
+                    System.out.println("NO PATH");
+                }
+
+                if (path != null && path.getPath().length > 0) { // if we have an actual item
                     DefaultMutableTreeTableNode selectedNode = (DefaultMutableTreeTableNode) path.getLastPathComponent();
                     setSelectedTreeItem((TreeItem) selectedNode.getValueAt(0));
-                } else {
-                    System.out.println("clear selection");
-                    itemTree.clearSelection();
-                    setSelectedTreeItem(null);
                 }
 
                 if (e.getClickCount() == 2 && selectedTreeItem != null) {
@@ -75,6 +77,8 @@ public class MainWindow {
 
             selectedTreeItem.setLongDescription(content);
         });
+
+        ToolTipManager.sharedInstance().registerComponent(itemTree);
     }
 
     private void setSelectedTreeItem(TreeItem treeItem) {
