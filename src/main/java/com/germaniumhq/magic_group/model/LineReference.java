@@ -1,8 +1,7 @@
 package com.germaniumhq.magic_group.model;
 
-import com.germaniumhq.magic_group.ui.TreeItem;
-
-@lombok.Data
+@lombok.Getter
+@lombok.Setter
 @lombok.Builder
 public class LineReference implements TreeItem {
     String expression;

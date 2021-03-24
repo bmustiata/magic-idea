@@ -1,10 +1,9 @@
 package com.germaniumhq.magic_group.model;
 
-import com.germaniumhq.magic_group.ui.TreeItem;
-
 import java.util.List;
 
-@lombok.Data
+@lombok.Getter
+@lombok.Setter
 @lombok.Builder
 public class Group implements TreeItem {
     String name;

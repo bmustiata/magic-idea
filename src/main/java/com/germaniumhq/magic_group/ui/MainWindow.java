@@ -1,13 +1,10 @@
 package com.germaniumhq.magic_group.ui;
 
 import com.germaniumhq.magic_group.model.Group;
-import com.germaniumhq.magic_group.model.LineReference;
-import com.germaniumhq.magic_group.model.SourceReference;
+import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.service.DataLoader;
 import com.intellij.openapi.project.Project;
-import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
-import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -26,23 +23,23 @@ public class MainWindow {
     private JTextField descriptionTextField;
     private JEditorPane longDescriptionEditorPane;
 
-    private TreeItem selectedTreeItem;
+    private MgTreeNode<? extends TreeItem> selectedTreeItem;
 
     public void initialize(@NotNull Project project) {
-        Group rootGroup = DataLoader.INSTANCE.loadRootGroup();
-
         DefaultTreeTableModel model = new DefaultTreeTableModel();
+        Group rootGroup = DataLoader.INSTANCE.loadRootGroup(model);
 
-        DefaultMutableTreeTableNode rootNode = createGroupNode(rootGroup);
+        MgTreeNode<? extends TreeItem> rootNode = DataLoader.INSTANCE.createGroupNode(rootGroup);
         model.setRoot(rootNode);
 
         itemTree.setModel(model);
         itemTree.setCellRenderer(new LabelTreeRenderer());
+        itemTree.setToggleClickCount(0);
 
         itemTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                TreePath path = itemTree.getPathForLocation(e.getX(), e.getY());
+                TreePath path = itemTree.getSelectionModel().getSelectionPath();
 
                 if (path != null) {
                     for (Object item: path.getPath()) {
@@ -53,8 +50,8 @@ public class MainWindow {
                 }
 
                 if (path != null && path.getPath().length > 0) { // if we have an actual item
-                    DefaultMutableTreeTableNode selectedNode = (DefaultMutableTreeTableNode) path.getLastPathComponent();
-                    setSelectedTreeItem((TreeItem) selectedNode.getValueAt(0));
+                    MgTreeNode<? extends TreeItem> selectedNode = (MgTreeNode<? extends TreeItem>) path.getLastPathComponent();
+                    setSelectedTreeItem(selectedNode);
                 }
 
                 if (e.getClickCount() == 2 && selectedTreeItem != null) {
@@ -67,6 +64,7 @@ public class MainWindow {
             if (selectedTreeItem == null) {
                 return;
             }
+
             selectedTreeItem.setDescription(content);
         });
 
@@ -78,10 +76,19 @@ public class MainWindow {
             selectedTreeItem.setLongDescription(content);
         });
 
+        newButton.addActionListener(actionEvent -> {
+            GroupEditor groupEditor = new GroupEditor((MgTreeNode<Group>) selectedTreeItem);
+            groupEditor.pack();
+            groupEditor.onOk(() -> {
+                itemTree.invalidate(); // FIXME: needed?
+            });
+            groupEditor.setVisible(true);
+        });
+
         ToolTipManager.sharedInstance().registerComponent(itemTree);
     }
 
-    private void setSelectedTreeItem(TreeItem treeItem) {
+    private void setSelectedTreeItem(MgTreeNode<? extends TreeItem> treeItem) {
         this.selectedTreeItem = treeItem;
 
         if (treeItem == null) {
@@ -101,40 +108,6 @@ public class MainWindow {
         longDescriptionEditorPane.setText(treeItem.getLongDescription());
         removeButton.setEnabled(true);
         editButton.setEnabled(true);
-    }
-
-    private DefaultMutableTreeTableNode createGroupNode(Group group) {
-        DefaultMutableTreeTableNode result = new DefaultMutableTreeTableNode(group);
-
-        if (group.getChildGroups() != null) {
-            for (Group childGroup: group.getChildGroups()) {
-                result.add(createGroupNode(childGroup));
-            }
-        }
-
-        if (group.getChildReferences() != null) {
-            for (SourceReference sourceReference: group.getChildReferences()) {
-                result.add(createSourceReferenceNode(sourceReference));
-            }
-        }
-
-        return result;
-    }
-
-    private MutableTreeTableNode createSourceReferenceNode(SourceReference sourceReference) {
-        DefaultMutableTreeTableNode result = new DefaultMutableTreeTableNode(sourceReference);
-
-        if (sourceReference.getLineReferences() != null) {
-            for (LineReference lineReference: sourceReference.getLineReferences()) {
-                result.add(createLineReferenceNode(lineReference));
-            }
-        }
-
-        return result;
-    }
-
-    private MutableTreeTableNode createLineReferenceNode(LineReference lineReference) {
-        return new DefaultMutableTreeTableNode(lineReference);
     }
 
     public JComponent getContent() {

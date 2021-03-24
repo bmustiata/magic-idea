@@ -1,6 +1,6 @@
 package com.germaniumhq.magic_group.ui;
 
-import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
+import com.germaniumhq.magic_group.model.TreeItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -13,9 +13,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
                                                   Object value, boolean sel, boolean expanded, boolean leaf,
                                                   int row, boolean hasFocus) {
 
-        DefaultMutableTreeTableNode treeNode = (DefaultMutableTreeTableNode) value;
-        TreeItem item = (TreeItem) treeNode.getValueAt(0);
-
+        MgTreeNode<? extends TreeItem> item = (MgTreeNode<? extends TreeItem>) value;
         StringBuilder html = new StringBuilder("<html>")
             .append(
                 String.format(

@@ -1,4 +1,4 @@
-package com.germaniumhq.magic_group.ui;
+package com.germaniumhq.magic_group.model;
 
 public interface TreeItem {
     String getName();
