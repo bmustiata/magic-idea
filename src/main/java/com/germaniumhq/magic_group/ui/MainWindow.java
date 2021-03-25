@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -24,9 +25,10 @@ public class MainWindow {
     private JEditorPane longDescriptionEditorPane;
 
     private MgTreeNode<? extends TreeItem> selectedTreeItem;
+    private DefaultTreeTableModel model;
 
     public void initialize(@NotNull Project project) {
-        DefaultTreeTableModel model = new DefaultTreeTableModel();
+        model = new DefaultTreeTableModel();
         Group rootGroup = DataLoader.INSTANCE.loadRootGroup(model);
 
         MgTreeNode<? extends TreeItem> rootNode = DataLoader.INSTANCE.createGroupNode(rootGroup);
@@ -35,6 +37,10 @@ public class MainWindow {
         itemTree.setModel(model);
         itemTree.setCellRenderer(new LabelTreeRenderer());
         itemTree.setToggleClickCount(0);
+        itemTree.setRootVisible(false);
+
+        // we update the button state
+        setSelectedTreeItem(rootNode);
 
         itemTree.addMouseListener(new MouseAdapter() {
             @Override
@@ -77,12 +83,14 @@ public class MainWindow {
         });
 
         newButton.addActionListener(actionEvent -> {
-            GroupEditor groupEditor = new GroupEditor((MgTreeNode<Group>) selectedTreeItem);
-            groupEditor.pack();
+            GroupEditor groupEditor = new GroupEditor((MgTreeNode<Group>) getSelectedTreeItem());
+            groupEditor.setMinimumSize(new Dimension(400, 300));
+            groupEditor.setLocationByPlatform(true);
+            groupEditor.setLocationRelativeTo(rootPanel);
 
             groupEditor.onOk((String name, String description, String longDescription) -> {
                 DataLoader.INSTANCE.addGroup(
-                        (MgTreeNode<Group>) selectedTreeItem,
+                        (MgTreeNode<Group>) getSelectedTreeItem(),
                         Group.builder()
                                 .name(name)
                                 .description(description)
@@ -97,10 +105,19 @@ public class MainWindow {
         ToolTipManager.sharedInstance().registerComponent(itemTree);
     }
 
+    private MgTreeNode<? extends TreeItem> getSelectedTreeItem() {
+        if (selectedTreeItem == null) {
+            return (MgTreeNode<? extends TreeItem>) model.getRoot();
+        }
+
+        return selectedTreeItem;
+    }
+
     private void setSelectedTreeItem(MgTreeNode<? extends TreeItem> treeItem) {
         this.selectedTreeItem = treeItem;
 
-        if (treeItem == null) {
+        // we don't allow editing the root node
+        if (treeItem == null || treeItem.equals(model.getRoot())) {
             descriptionTextField.setEnabled(false);
             descriptionTextField.setText("");
             longDescriptionEditorPane.setEnabled(false);

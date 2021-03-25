@@ -6,7 +6,6 @@ import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.ui.MgTreeNode;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 
-import javax.swing.tree.TreeModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,15 +52,15 @@ public class DataLoader {
             parentGroup.setChildGroups(new ArrayList<>());
         }
 
+        // we update the model
         parentGroup.getChildGroups().add(child);
 
+        // we update also the visual model
         treeModel.insertNodeInto(
                 createGroupNode(child),
                 treeNode,
                 parentGroup.getChildGroups().size() - 1
         );
-
-        // treeNode.add(createGroupNode(child));
     }
 
     public MgTreeNode<Group> createGroupNode(Group group) {
