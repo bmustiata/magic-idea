@@ -79,9 +79,18 @@ public class MainWindow {
         newButton.addActionListener(actionEvent -> {
             GroupEditor groupEditor = new GroupEditor((MgTreeNode<Group>) selectedTreeItem);
             groupEditor.pack();
-            groupEditor.onOk(() -> {
-                itemTree.invalidate(); // FIXME: needed?
+
+            groupEditor.onOk((String name, String description, String longDescription) -> {
+                DataLoader.INSTANCE.addGroup(
+                        (MgTreeNode<Group>) selectedTreeItem,
+                        Group.builder()
+                                .name(name)
+                                .description(description)
+                                .longDescription(longDescription)
+                                .build()
+                );
             });
+
             groupEditor.setVisible(true);
         });
 

@@ -58,7 +58,7 @@ public class DataLoader {
         treeModel.insertNodeInto(
                 createGroupNode(child),
                 treeNode,
-                parentGroup.getChildGroups().size()
+                parentGroup.getChildGroups().size() - 1
         );
 
         // treeNode.add(createGroupNode(child));
@@ -66,6 +66,7 @@ public class DataLoader {
 
     public MgTreeNode<Group> createGroupNode(Group group) {
         MgTreeNode<Group> result = new MgTreeNode<>(group);
+        result.setAllowsChildren(true);
 
         if (group.getChildGroups() != null) {
             for (Group childGroup: group.getChildGroups()) {

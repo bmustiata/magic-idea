@@ -1,7 +1,6 @@
 package com.germaniumhq.magic_group.ui;
 
 import com.germaniumhq.magic_group.model.Group;
-import com.germaniumhq.magic_group.service.DataLoader;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -9,13 +8,17 @@ import java.awt.event.*;
 public class GroupEditor extends JDialog {
     private final MgTreeNode<Group> group;
 
+    interface Action {
+        void call(String name, String description, String longDescription);
+    }
+
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField nameTextField;
     private JTextField descriptionTextField;
     private JEditorPane longDescriptionEditorPane;
-    private Runnable okCallback;
+    private GroupEditor.Action okCallback;
 
     public GroupEditor(MgTreeNode<Group> group) {
         this.group = group;
@@ -48,15 +51,11 @@ public class GroupEditor extends JDialog {
     }
 
     private void onOK() {
-        DataLoader.INSTANCE.addGroup(
-                group,
-                Group.builder()
-                        .name(nameTextField.getText())
-                        .description(descriptionTextField.getText())
-                        .longDescription(longDescriptionEditorPane.getText())
-                        .build()
+        this.okCallback.call(
+                nameTextField.getText(),
+                descriptionTextField.getText(),
+                longDescriptionEditorPane.getText()
         );
-        this.okCallback.run();
         dispose();
     }
 
@@ -65,7 +64,7 @@ public class GroupEditor extends JDialog {
         dispose();
     }
 
-    public void onOk(Runnable okCallback) {
+    public void onOk(GroupEditor.Action okCallback) {
         this.okCallback = okCallback;
     }
 }
