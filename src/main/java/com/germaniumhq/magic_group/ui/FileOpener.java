@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class FileOpener {
     public static <T extends TreeItem> void openFile(@NotNull Project project, MgTreeNode<T> selectedTreeItem) {
-        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/mgroup2/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
+        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/magic-idea/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
 
         @NotNull Navigatable item = new OpenFileDescriptor(project, file, 10, 0);
         item.navigate( true);

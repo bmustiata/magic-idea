@@ -1,11 +1,14 @@
 package com.germaniumhq.magic_group.ui;
 
+import com.germaniumhq.magic_group.model.Group;
+import com.germaniumhq.magic_group.model.LineReference;
+import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.IconUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,13 +24,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
         MgTreeNode<? extends TreeItem> item = (MgTreeNode<? extends TreeItem>) value;
 
-        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/mgroup2/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
-        @NotNull FileType fileType = file.getFileType();
-
-        if (fileType != null) {
-            @Nullable Icon icon = fileType.getIcon();
-            setIcon(icon);
-        }
+        updateIcon(item);
 
         StringBuilder html = new StringBuilder("<html>")
             .append(
@@ -49,6 +46,43 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
         return super.getTreeCellRendererComponent(
                 tree, html.toString(), sel, expanded, leaf, row, hasFocus);
+    }
+
+    private void updateIcon(MgTreeNode<? extends TreeItem> item) {
+        if (item.getTreeItem() instanceof SourceReference) {
+            setAllIcons(findIconForResource());
+        } else if (item.getTreeItem() instanceof Group) {
+            setAllIcons(IconLoader.findIcon("nodes/folder.svg"));
+        } else if (item.getTreeItem() instanceof LineReference) {
+            LineReference lineReference = (LineReference) item.getTreeItem();
+
+            Icon lineLocationIcon = IconLoader.findIcon("general/arrowRight.svg");
+            Icon annotatedIcon = IconUtil.addText(lineLocationIcon, lineReference.getExpression());
+
+            setAllIcons(annotatedIcon);
+        }
+    }
+
+    private void setAllIcons(Icon icon) {
+        setIcon(icon);
+        setLeafIcon(icon);
+        setOpenIcon(icon);
+        setClosedIcon(icon);
+        setDisabledIcon(icon);
+    }
+
+    @Nullable
+    private Icon findIconForResource() {
+        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/magic-idea/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
+
+        if (file == null) {
+            return null;
+        }
+
+        @NotNull FileType fileType = file.getFileType();
+        @Nullable Icon icon = fileType.getIcon();
+
+        return icon;
     }
 
     @NotNull
@@ -78,6 +112,6 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
     }
 
     private boolean isEmpty(String str) {
-        return str == null || str.isBlank();
+        return str == null || str.isEmpty();
     }
 }
