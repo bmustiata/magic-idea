@@ -1,12 +1,12 @@
 package com.germaniumhq.magic_group.ui;
 
-import com.germaniumhq.magic_group.model.Group;
+import com.germaniumhq.magic_group.model.TreeItem;
 
 import javax.swing.*;
 import java.awt.event.*;
 
-public class GroupEditor extends JDialog {
-    private final MgTreeNode<Group> group;
+public class EntryEditor extends JDialog {
+    private final MgTreeNode<? extends TreeItem> mgTreeNode;
 
     interface Action {
         void call(String name, String description, String longDescription);
@@ -18,11 +18,12 @@ public class GroupEditor extends JDialog {
     private JTextField nameTextField;
     private JTextField descriptionTextField;
     private JEditorPane longDescriptionEditorPane;
-    private GroupEditor.Action okCallback;
+    private EntryEditor.Action okCallback;
 
-    public GroupEditor(MgTreeNode<Group> group) {
-        this.group = group;
+    public EntryEditor(MgTreeNode<? extends TreeItem> mgTreeNode, String title) {
+        this.mgTreeNode = mgTreeNode;
 
+        setTitle(title);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -39,11 +40,10 @@ public class GroupEditor extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(
+                e -> onCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         nameTextField.getDocument().addDocumentListener((ChangeListener) content -> {
             buttonOK.setEnabled(!content.isBlank());
@@ -64,7 +64,7 @@ public class GroupEditor extends JDialog {
         dispose();
     }
 
-    public void onOk(GroupEditor.Action okCallback) {
+    public void onOk(EntryEditor.Action okCallback) {
         this.okCallback = okCallback;
     }
 }

@@ -63,6 +63,24 @@ public class DataLoader {
         );
     }
 
+    public void addLineReference(MgTreeNode<SourceReference> treeNode, LineReference child) {
+        SourceReference parentSource = treeNode.getTreeItem();
+
+        if (parentSource.getLineReferences() == null) {
+            parentSource.setLineReferences(new ArrayList<>());
+        }
+
+        // we update the model
+        parentSource.getLineReferences().add(child);
+
+        // we update also the visual model
+        treeModel.insertNodeInto(
+                createLineReferenceNode(child),
+                treeNode,
+                parentSource.getLineReferences().size() - 1
+        );
+    }
+
     public MgTreeNode<Group> createGroupNode(Group group) {
         MgTreeNode<Group> result = new MgTreeNode<>(group);
         result.setAllowsChildren(true);

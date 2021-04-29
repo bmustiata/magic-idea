@@ -1,7 +1,13 @@
 package com.germaniumhq.magic_group.ui;
 
 import com.germaniumhq.magic_group.model.TreeItem;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -14,6 +20,15 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
                                                   int row, boolean hasFocus) {
 
         MgTreeNode<? extends TreeItem> item = (MgTreeNode<? extends TreeItem>) value;
+
+        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/mgroup2/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
+        @NotNull FileType fileType = file.getFileType();
+
+        if (fileType != null) {
+            @Nullable Icon icon = fileType.getIcon();
+            setIcon(icon);
+        }
+
         StringBuilder html = new StringBuilder("<html>")
             .append(
                 String.format(
@@ -44,12 +59,13 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
             tooltip.append(item.getDescription());
         }
 
-        if (!isEmpty(item.getDescription()) && !isEmpty(item.getLongDescription())) {
+        String longDescription = item.getLongDescription();
+        if (!isEmpty(item.getDescription()) && !isEmpty(longDescription)) {
             tooltip.append("<br><br>");
         }
 
-        if (!isEmpty(item.getLongDescription())) {
-            tooltip.append(item.getLongDescription());
+        if (!isEmpty(longDescription)) {
+            tooltip.append(longDescription.replaceAll("\\n", "<br>"));
         }
 
         String tooltipString = tooltip.toString();

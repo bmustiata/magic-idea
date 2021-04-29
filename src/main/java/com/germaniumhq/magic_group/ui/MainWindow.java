@@ -1,6 +1,8 @@
 package com.germaniumhq.magic_group.ui;
 
 import com.germaniumhq.magic_group.model.Group;
+import com.germaniumhq.magic_group.model.LineReference;
+import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.service.DataLoader;
 import com.intellij.openapi.project.Project;
@@ -83,26 +85,55 @@ public class MainWindow {
         });
 
         newButton.addActionListener(actionEvent -> {
-            GroupEditor groupEditor = new GroupEditor((MgTreeNode<Group>) getSelectedTreeItem());
-            groupEditor.setMinimumSize(new Dimension(400, 300));
-            groupEditor.setLocationByPlatform(true);
-            groupEditor.setLocationRelativeTo(rootPanel);
+            MgTreeNode<? extends TreeItem> selectedTreeItem = getSelectedTreeItem();
 
-            groupEditor.onOk((String name, String description, String longDescription) -> {
-                DataLoader.INSTANCE.addGroup(
-                        (MgTreeNode<Group>) getSelectedTreeItem(),
-                        Group.builder()
-                                .name(name)
-                                .description(description)
-                                .longDescription(longDescription)
-                                .build()
-                );
-            });
+            if (selectedTreeItem.getTreeItem() instanceof Group) {
+                createEntryEditor("New group...", (String name, String description, String longDescription) -> {
+                    DataLoader.INSTANCE.addGroup(
+                            (MgTreeNode<Group>) getSelectedTreeItem(),
+                            Group.builder()
+                                    .name(name)
+                                    .description(description)
+                                    .longDescription(longDescription)
+                                    .build()
+                    );
+                });
+            } else {
+                MgTreeNode<?> selectedParentNode = getSelectedTreeItem().getTreeItem() instanceof SourceReference ?
+                        getSelectedTreeItem() :
+                        (MgTreeNode<?>) getSelectedTreeItem().getParent();
 
-            groupEditor.setVisible(true);
+                createEntryEditor("New line reference...", (String name, String description, String longDescription) -> {
+                    DataLoader.INSTANCE.addLineReference(
+                            (MgTreeNode<SourceReference>) selectedParentNode,
+                            LineReference.builder()
+                                    .expression(name)
+                                    .description(description)
+                                    .longDescription(longDescription)
+                                    .build()
+                    );
+                });
+            }
         });
 
         ToolTipManager.sharedInstance().registerComponent(itemTree);
+    }
+
+    private void createEntryEditor(String title, EntryEditor.Action okAction) {
+        EntryEditor entryEditor = createEntryEditor(title);
+        entryEditor.onOk(okAction);
+        entryEditor.setVisible(true);
+    }
+
+    @NotNull
+    private EntryEditor createEntryEditor(String title) {
+        EntryEditor entryEditor = new EntryEditor(getSelectedTreeItem(), title);
+
+        entryEditor.setMinimumSize(new Dimension(400, 300));
+        entryEditor.setLocationByPlatform(true);
+        entryEditor.setLocationRelativeTo(rootPanel);
+
+        return entryEditor;
     }
 
     private MgTreeNode<? extends TreeItem> getSelectedTreeItem() {
