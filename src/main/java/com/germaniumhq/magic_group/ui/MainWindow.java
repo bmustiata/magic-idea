@@ -40,6 +40,9 @@ public class MainWindow {
         itemTree.setCellRenderer(new LabelTreeRenderer());
         itemTree.setToggleClickCount(0);
         itemTree.setRootVisible(false);
+        itemTree.setDragEnabled(true);
+        itemTree.setDropMode(DropMode.ON_OR_INSERT);
+        itemTree.setTransferHandler(new MagicGroupTransferHandler());
 
         // we update the button state
         setSelectedTreeItem(rootNode);
