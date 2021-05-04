@@ -50,7 +50,8 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
     private void updateIcon(MgTreeNode<? extends TreeItem> item) {
         if (item.getTreeItem() instanceof SourceReference) {
-            setAllIcons(findIconForResource());
+            String fileUri = ((SourceReference)item.getTreeItem()).getUri();
+            setAllIcons(findIconForResource(fileUri));
         } else if (item.getTreeItem() instanceof Group) {
             setAllIcons(IconLoader.findIcon("nodes/folder.svg"));
         } else if (item.getTreeItem() instanceof LineReference) {
@@ -72,11 +73,12 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
     }
 
     @Nullable
-    private Icon findIconForResource() {
-        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/magic-idea/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
+    private Icon findIconForResource(String fileUri) {
+        String url = convertToUrl(fileUri);
+        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(url);
 
         if (file == null) {
-            return null;
+            return IconLoader.findIcon("fileTypes/unknown.svg");
         }
 
         @NotNull FileType fileType = file.getFileType();
@@ -113,5 +115,11 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
     private boolean isEmpty(String str) {
         return str == null || str.isEmpty();
+    }
+
+    private String convertToUrl(String fileUri) {
+        String uriPath = fileUri.replaceFirst("^(.*?):", ""); // remove file:
+
+        return "file://" + uriPath;
     }
 }

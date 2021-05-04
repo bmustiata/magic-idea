@@ -63,7 +63,6 @@ public class MagicGroupTransferHandler extends TransferHandler {
 
     @Override
     protected void exportDone(JComponent source, Transferable data, int action) {
-        System.out.println("export DONE");
         super.exportDone(source, data, action);
     }
 }
