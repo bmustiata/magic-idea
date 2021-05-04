@@ -5,6 +5,7 @@ import com.germaniumhq.magic_group.model.LineReference;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.service.DataLoader;
+import com.germaniumhq.magic_group.ui.dnd.MagicGroupTransferHandler;
 import com.intellij.openapi.project.Project;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ public class MainWindow {
         itemTree.setModel(model);
         itemTree.setCellRenderer(new LabelTreeRenderer());
         itemTree.setToggleClickCount(0);
-        itemTree.setRootVisible(false);
+        itemTree.setRootVisible(true);
         itemTree.setDragEnabled(true);
         itemTree.setDropMode(DropMode.ON_OR_INSERT);
         itemTree.setTransferHandler(new MagicGroupTransferHandler());

@@ -7,12 +7,22 @@ import lombok.RequiredArgsConstructor;
 import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 
+import java.util.UUID;
+
 
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MgTreeNode<T extends TreeItem> extends DefaultMutableTreeTableNode implements TreeItem {
     final T treeItem;
+
+    @EqualsAndHashCode.Exclude
+    final String uid;
+
+    public MgTreeNode(T treeItem) {
+        this.treeItem = treeItem;
+        this.uid = UUID.randomUUID().toString();
+    }
 
     @Override
     public String getName() {
