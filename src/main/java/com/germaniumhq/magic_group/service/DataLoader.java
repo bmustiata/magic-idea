@@ -9,8 +9,8 @@ import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DataLoader {
@@ -37,10 +37,6 @@ public class DataLoader {
     public void addGroup(MgTreeNode<Group> treeNode, Group child) {
         Group parentGroup = treeNode.getTreeItem();
 
-        if (parentGroup.getChildGroups() == null) {
-            parentGroup.setChildGroups(new ArrayList<>());
-        }
-
         // we update the model
         parentGroup.getChildGroups().add(child);
 
@@ -55,18 +51,18 @@ public class DataLoader {
     public void addSourceReference(MgTreeNode<Group> treeNode, SourceReference child) {
         Group parentGroup = treeNode.getTreeItem();
 
-        if (parentGroup.getChildReferences() == null) {
-            parentGroup.setChildReferences(new ArrayList<>());
+        if (parentGroup.getSourceReferences() == null) {
+            parentGroup.setSourceReferences(new ArrayList<>());
         }
 
         // we update the model
-        parentGroup.getChildReferences().add(child);
+        parentGroup.getSourceReferences().add(child);
 
         // we update also the visual model
         treeModel.insertNodeInto(
                 createSourceReferenceNode(child),
                 treeNode,
-                parentGroup.getChildReferences().size() - 1
+                parentGroup.getSourceReferences().size() - 1
         );
     }
 
@@ -94,16 +90,12 @@ public class DataLoader {
 
         this.nodeCache.put(result.getUid(), result);
 
-        if (group.getChildGroups() != null) {
-            for (Group childGroup: group.getChildGroups()) {
-                result.add(createGroupNode(childGroup));
-            }
+        for (Group childGroup: group.getChildGroups()) {
+            result.add(createGroupNode(childGroup));
         }
 
-        if (group.getChildReferences() != null) {
-            for (SourceReference sourceReference: group.getChildReferences()) {
-                result.add(createSourceReferenceNode(sourceReference));
-            }
+        for (SourceReference sourceReference: group.getSourceReferences()) {
+            result.add(createSourceReferenceNode(sourceReference));
         }
 
         return result;
@@ -133,5 +125,43 @@ public class DataLoader {
 
     public MgTreeNode<? extends TreeItem> get(String nodeId) {
         return nodeCache.get(nodeId);
+    }
+
+    public boolean reparentNode(
+            MgTreeNode<? extends TreeItem> oldParent,
+            MgTreeNode<? extends TreeItem> newParent,
+            MgTreeNode<? extends TreeItem> sourceNode) {
+        if (oldParent == null || newParent == null || sourceNode == null) {
+            return false;
+        }
+
+        if (!oldParent.getTreeItem().getClass().equals(newParent.getTreeItem().getClass())) {
+            return false;
+        }
+
+        // TODO: do the insertion with indexes
+        if (sourceNode.getTreeItem() instanceof LineReference) {
+            LineReference lineReference = (LineReference) sourceNode.getTreeItem();
+            ((SourceReference)oldParent.getTreeItem()).getLineReferences().remove(lineReference);
+            ((SourceReference)newParent.getTreeItem()).getLineReferences().add(lineReference);
+        } else if (sourceNode.getTreeItem() instanceof SourceReference) {
+            SourceReference sourceReference = (SourceReference) sourceNode.getTreeItem();
+            ((Group)oldParent.getTreeItem()).getSourceReferences().remove(sourceReference);
+            ((Group)newParent.getTreeItem()).getSourceReferences().add(sourceReference);
+        } else if (sourceNode.getTreeItem() instanceof Group) {
+            Group sourceGroup = (Group) sourceNode.getTreeItem();
+            ((Group)oldParent.getTreeItem()).getChildGroups().remove(sourceGroup);
+            ((Group)newParent.getTreeItem()).getChildGroups().add(sourceGroup);
+        } else {
+            throw new IllegalArgumentException("Unknown type for " + sourceNode.getTreeItem());
+        }
+
+        treeModel.removeNodeFromParent(sourceNode);
+        treeModel.insertNodeInto(
+                sourceNode,
+                newParent,
+                0);
+
+        return true;
     }
 }

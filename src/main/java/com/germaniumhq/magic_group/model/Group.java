@@ -1,5 +1,6 @@
 package com.germaniumhq.magic_group.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @lombok.Getter
@@ -9,6 +10,17 @@ public class Group implements TreeItem {
     String name;
     String description;
     String longDescription;
-    List<Group> childGroups;
-    List<SourceReference> childReferences;
+
+    @lombok.Builder.Default
+    List<Group> childGroups = new ArrayList<>();
+
+    @lombok.Builder.Default
+    List<SourceReference> sourceReferences = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

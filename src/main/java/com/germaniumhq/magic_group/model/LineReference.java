@@ -12,4 +12,11 @@ public class LineReference implements TreeItem {
     public String getName() {
         return expression;
     }
+
+    @Override
+    public String toString() {
+        return "LineReference{" +
+                "expression='" + expression + '\'' +
+                '}';
+    }
 }

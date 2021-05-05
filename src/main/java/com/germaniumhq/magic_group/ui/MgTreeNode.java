@@ -48,4 +48,12 @@ public class MgTreeNode<T extends TreeItem> extends DefaultMutableTreeTableNode 
     public void setLongDescription(String newValue) {
         treeItem.setLongDescription(newValue);
     }
+
+    @Override
+    public String toString() {
+        return "MgTreeNode{" +
+                "treeItem=" + treeItem +
+                ", uid='" + uid + '\'' +
+                '}';
+    }
 }

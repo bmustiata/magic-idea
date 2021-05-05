@@ -1,5 +1,6 @@
 package com.germaniumhq.magic_group.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @lombok.Getter
@@ -9,10 +10,19 @@ public class SourceReference implements TreeItem {
     String description;
     String longDescription;
     String url;  // path to resource
-    List<LineReference> lineReferences;
+
+    @lombok.Builder.Default
+    List<LineReference> lineReferences = new ArrayList<>();
 
     @Override
     public String getName() {
         return url; // probably only the file name
+    }
+
+    @Override
+    public String toString() {
+        return "SourceReference{" +
+                "url='" + url + '\'' +
+                '}';
     }
 }

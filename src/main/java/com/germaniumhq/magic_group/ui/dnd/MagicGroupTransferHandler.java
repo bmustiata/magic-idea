@@ -46,9 +46,11 @@ public class MagicGroupTransferHandler extends TransferHandler {
             String data = transferable.getTransferData(DataFlavor.stringFlavor).toString();
             MgTreeNode<? extends TreeItem> sourceNode = DataLoader.INSTANCE.get(data.substring(3));
 
-            assert sourceNode != null;
-
-            return true;
+            return DataLoader.INSTANCE.reparentNode(
+                    (MgTreeNode<? extends TreeItem>) sourceNode.getParent(),
+                    parentGroup,
+                    sourceNode
+            );
         }
 
         // this is a DND from outside the tree, so we look for some files
