@@ -6,6 +6,9 @@ import java.util.List;
 @lombok.Getter
 @lombok.Setter
 @lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
+@lombok.EqualsAndHashCode
 public class SourceReference implements TreeItem {
     String description;
     String longDescription;

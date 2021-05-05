@@ -57,10 +57,6 @@ public class DataLoader {
     public void addLineReference(MgTreeNode<SourceReference> treeNode, LineReference child) {
         SourceReference parentSource = treeNode.getTreeItem();
 
-        if (parentSource.getLineReferences() == null) {
-            parentSource.setLineReferences(new ArrayList<>());
-        }
-
         // we update the model
         parentSource.getLineReferences().add(child);
 

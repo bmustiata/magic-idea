@@ -8,6 +8,7 @@ import java.util.List;
 @lombok.Builder
 @lombok.NoArgsConstructor
 @lombok.AllArgsConstructor
+@lombok.EqualsAndHashCode
 public class Group implements TreeItem {
     String name;
     String description;
