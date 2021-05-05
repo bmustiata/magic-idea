@@ -5,9 +5,9 @@ import com.germaniumhq.magic_group.model.LineReference;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.ui.MgTreeNode;
-import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
-import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import java.util.*;
 
 public class DataLoader {
@@ -15,7 +15,7 @@ public class DataLoader {
 
     // We need a reference to the tree model, to do the updates in the UI
     // after we update the local model.
-    private DefaultTreeTableModel treeModel;
+    private DefaultTreeModel treeModel;
 
     // Keep a node cache by IDs
     private Map<String, MgTreeNode<? extends TreeItem>> nodeCache = new HashMap<>();
@@ -31,7 +31,7 @@ public class DataLoader {
         // we update also the visual model
         treeModel.insertNodeInto(
                 createGroupNode(child),
-                (MutableTreeTableNode) treeModel.getRoot(),
+                treeNode,
                 parentGroup.getChildGroups().size() - 1
         );
     }
@@ -180,7 +180,7 @@ public class DataLoader {
         treeModel.removeNodeFromParent(selectedTreeItem);
     }
 
-    public void setTreeModel(DefaultTreeTableModel treeModel) {
+    public void setTreeModel(DefaultTreeModel treeModel) {
         this.treeModel = treeModel;
     }
 }

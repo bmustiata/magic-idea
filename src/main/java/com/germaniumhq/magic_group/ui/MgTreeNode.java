@@ -4,19 +4,18 @@ import com.germaniumhq.magic_group.model.TreeItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
-import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.UUID;
 
 
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class MgTreeNode<T extends TreeItem> extends DefaultMutableTreeTableNode implements TreeItem {
+public class MgTreeNode<T extends TreeItem> extends DefaultMutableTreeNode implements TreeItem {
+    @EqualsAndHashCode.Exclude
     final T treeItem;
 
-    @EqualsAndHashCode.Exclude
     final String uid;
 
     public MgTreeNode(T treeItem) {

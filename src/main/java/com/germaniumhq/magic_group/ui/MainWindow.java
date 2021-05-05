@@ -7,11 +7,13 @@ import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.service.DataLoader;
 import com.germaniumhq.magic_group.service.ModelSerializer;
 import com.germaniumhq.magic_group.ui.dnd.MagicGroupTransferHandler;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -29,14 +31,14 @@ public class MainWindow {
     private JEditorPane longDescriptionEditorPane;
 
     private MgTreeNode<? extends TreeItem> selectedTreeItem;
-    private DefaultTreeTableModel model;
+    private DefaultTreeModel model;
 
     public void initialize(@NotNull Project project) {
-        model = new DefaultTreeTableModel();
-        Group rootGroup = ModelSerializer.INSTANCE.load();
+        Group rootGroup = ServiceManager.getService(ModelSerializer.class).getState();
+        MgTreeNode<? extends TreeItem> rootNode = DataLoader.INSTANCE.createGroupNode(rootGroup);
+        model = new DefaultTreeModel(rootNode);
 
         DataLoader.INSTANCE.setTreeModel(model);
-        MgTreeNode<? extends TreeItem> rootNode = DataLoader.INSTANCE.createGroupNode(rootGroup);
         model.setRoot(rootNode);
 
         itemTree.setModel(model);
