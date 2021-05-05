@@ -5,6 +5,7 @@ import com.germaniumhq.magic_group.model.LineReference;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.service.DataLoader;
+import com.germaniumhq.magic_group.service.ModelSerializer;
 import com.germaniumhq.magic_group.ui.dnd.MagicGroupTransferHandler;
 import com.intellij.openapi.project.Project;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
@@ -32,8 +33,9 @@ public class MainWindow {
 
     public void initialize(@NotNull Project project) {
         model = new DefaultTreeTableModel();
-        Group rootGroup = DataLoader.INSTANCE.loadRootGroup(model);
+        Group rootGroup = ModelSerializer.INSTANCE.load();
 
+        DataLoader.INSTANCE.setTreeModel(model);
         MgTreeNode<? extends TreeItem> rootNode = DataLoader.INSTANCE.createGroupNode(rootGroup);
         model.setRoot(rootNode);
 

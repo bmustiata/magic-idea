@@ -5,7 +5,6 @@ import com.germaniumhq.magic_group.model.LineReference;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.ui.MgTreeNode;
-import com.intellij.util.containers.HashSetQueue;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 
@@ -22,15 +21,6 @@ public class DataLoader {
     private Map<String, MgTreeNode<? extends TreeItem>> nodeCache = new HashMap<>();
 
     private DataLoader() {}
-
-    public Group loadRootGroup(DefaultTreeTableModel model) {
-        this.treeModel = model;
-
-        return Group.builder()
-                .name("root")
-                .description("none")
-                .build();
-    }
 
     public void addGroup(MgTreeNode<Group> treeNode, Group child) {
         Group parentGroup = treeNode.getTreeItem();
@@ -192,5 +182,9 @@ public class DataLoader {
 
         // remove the tree node
         treeModel.removeNodeFromParent(selectedTreeItem);
+    }
+
+    public void setTreeModel(DefaultTreeTableModel treeModel) {
+        this.treeModel = treeModel;
     }
 }
