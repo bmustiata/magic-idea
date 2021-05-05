@@ -8,11 +8,11 @@ import java.util.List;
 public class SourceReference implements TreeItem {
     String description;
     String longDescription;
-    String uri;  // path to resource
+    String url;  // path to resource
     List<LineReference> lineReferences;
 
     @Override
     public String getName() {
-        return uri; // probably only the file name
+        return url; // probably only the file name
     }
 }

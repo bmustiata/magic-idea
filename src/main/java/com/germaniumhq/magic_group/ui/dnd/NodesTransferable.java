@@ -3,7 +3,6 @@ package com.germaniumhq.magic_group.ui.dnd;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.ui.MgTreeNode;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
@@ -21,7 +20,7 @@ public class NodesTransferable implements Transferable {
     public NodesTransferable(MgTreeNode<? extends TreeItem> selectedItem) throws ClassNotFoundException {
         if (selectedItem.getTreeItem() instanceof SourceReference) {
             SourceReference sourceReference = (SourceReference) selectedItem.getTreeItem();
-            File file = new File(sourceReference.getUri());
+            File file = new File(sourceReference.getUrl());
             content.put(DataFlavor.javaFileListFlavor, Collections.singletonList(file));
         }
 

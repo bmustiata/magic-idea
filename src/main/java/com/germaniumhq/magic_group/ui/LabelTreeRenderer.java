@@ -50,7 +50,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
     private void updateIcon(MgTreeNode<? extends TreeItem> item) {
         if (item.getTreeItem() instanceof SourceReference) {
-            String fileUri = ((SourceReference)item.getTreeItem()).getUri();
+            String fileUri = ((SourceReference)item.getTreeItem()).getUrl();
             setAllIcons(findIconForResource(fileUri));
         } else if (item.getTreeItem() instanceof Group) {
             setAllIcons(IconLoader.findIcon("nodes/folder.svg"));
@@ -73,8 +73,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
     }
 
     @Nullable
-    private Icon findIconForResource(String fileUri) {
-        String url = convertToUrl(fileUri);
+    private Icon findIconForResource(String url) {
         @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(url);
 
         if (file == null) {

@@ -1,5 +1,7 @@
 package com.germaniumhq.magic_group.ui;
 
+import com.germaniumhq.magic_group.model.LineReference;
+import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
@@ -11,9 +13,26 @@ import org.jetbrains.annotations.Nullable;
 
 public class FileOpener {
     public static <T extends TreeItem> void openFile(@NotNull Project project, MgTreeNode<T> selectedTreeItem) {
-        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file:///home/raptor/projects/magic-idea/src/main/java/com/germaniumhq/magic_group/service/DataLoader.java");
+        final SourceReference sourceReference;
+        final int line;
 
-        @NotNull Navigatable item = new OpenFileDescriptor(project, file, 10, 0);
+        if (selectedTreeItem.getTreeItem() instanceof SourceReference) {
+            sourceReference = (SourceReference) selectedTreeItem.getTreeItem();
+            line = 0;
+        } else {
+            sourceReference = ((MgTreeNode<SourceReference>) selectedTreeItem.getParent()).getTreeItem();
+            line = findLine(selectedTreeItem);
+        }
+
+        @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(sourceReference.getUrl());
+
+        @NotNull Navigatable item = new OpenFileDescriptor(project, file, line, 0);
         item.navigate( true);
+    }
+
+    private static <T extends TreeItem> int findLine(MgTreeNode<T> selectedTreeItem) {
+        int userLine = Integer.parseInt(((LineReference) selectedTreeItem.getTreeItem()).getExpression());
+
+        return userLine - 1;
     }
 }

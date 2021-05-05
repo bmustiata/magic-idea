@@ -14,6 +14,7 @@ import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class MagicGroupTransferHandler extends TransferHandler {
@@ -55,7 +56,11 @@ public class MagicGroupTransferHandler extends TransferHandler {
             List<File> data = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
 
             for (File f: data) {
-                DataLoader.INSTANCE.addSourceReference(parentGroup, SourceReference.builder().uri(f.toURI().toASCIIString()).build());
+                // the file.toURI.toURL returns an unusable potato.
+                String fileUrl = Paths.get(f.getAbsolutePath()).toUri().toString();
+                DataLoader.INSTANCE.addSourceReference(
+                        parentGroup,
+                        SourceReference.builder().url(fileUrl).build());
             }
 
             return true;
