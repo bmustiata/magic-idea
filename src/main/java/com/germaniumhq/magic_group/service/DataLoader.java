@@ -5,13 +5,11 @@ import com.germaniumhq.magic_group.model.LineReference;
 import com.germaniumhq.magic_group.model.SourceReference;
 import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.ui.MgTreeNode;
+import com.intellij.util.containers.HashSetQueue;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DataLoader {
     public static DataLoader INSTANCE = new DataLoader();
@@ -163,5 +161,36 @@ public class DataLoader {
                 0);
 
         return true;
+    }
+
+    public void remove(MgTreeNode<? extends TreeItem> selectedTreeItem) {
+        // remove it from the model
+        MgTreeNode<? extends TreeItem> parent = (MgTreeNode<? extends TreeItem>) selectedTreeItem.getParent();
+
+        if (selectedTreeItem.getTreeItem() instanceof LineReference) {
+            ((SourceReference)parent.getTreeItem()).getLineReferences().remove(selectedTreeItem.getTreeItem());
+        } else if (selectedTreeItem.getTreeItem() instanceof SourceReference) {
+            ((Group)parent.getTreeItem()).getSourceReferences().remove(selectedTreeItem.getTreeItem());
+        } else if (selectedTreeItem.getTreeItem() instanceof Group) {
+            ((Group)parent.getTreeItem()).getChildGroups().remove(selectedTreeItem.getTreeItem());
+        } else {
+            throw new IllegalArgumentException("Unknown type for item " + selectedTreeItem);
+        }
+
+        // clean the tree node cache
+        Deque<MgTreeNode<? extends TreeItem>> nodesToClean = new LinkedList<>();
+        nodesToClean.addLast(selectedTreeItem);
+
+        while (!nodesToClean.isEmpty()) {
+            MgTreeNode<? extends TreeItem> currentItem = nodesToClean.removeFirst();
+            nodeCache.remove(currentItem.getUid());
+
+            for (int i = 0; i < currentItem.getChildCount(); i++) {
+                nodesToClean.addLast((MgTreeNode<? extends TreeItem>) currentItem.getChildAt(i));
+            }
+        }
+
+        // remove the tree node
+        treeModel.removeNodeFromParent(selectedTreeItem);
     }
 }

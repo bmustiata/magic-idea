@@ -120,6 +120,10 @@ public class MainWindow {
             }
         });
 
+        removeButton.addActionListener(actionEvent -> {
+            DataLoader.INSTANCE.remove(getSelectedTreeItem());
+        });
+
         ToolTipManager.sharedInstance().registerComponent(itemTree);
     }
 
