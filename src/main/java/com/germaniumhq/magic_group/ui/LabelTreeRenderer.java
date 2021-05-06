@@ -8,6 +8,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,20 +23,19 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
                                                   int row, boolean hasFocus) {
 
         MgTreeNode<? extends TreeItem> item = (MgTreeNode<? extends TreeItem>) value;
-
         updateIcon(item);
 
         StringBuilder html = new StringBuilder("<html>")
             .append(
                 String.format(
                     "%s",
-                    item.getName()
+                    StringEscapeUtils.escapeHtml(item.getName())
                 )
             );
 
         if (!isEmpty(item.getDescription())) {
             html.append("<span style='color: #cccccc'>&nbsp;-&nbsp;")
-                    .append(item.getDescription())
+                    .append(StringEscapeUtils.escapeHtml(item.getDescription()))
                     .append("</span>");
         }
 
@@ -94,7 +94,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
         }
 
         if (!isEmpty(longDescription)) {
-            tooltip.append(longDescription.replaceAll("\\n", "<br>"));
+            tooltip.append(StringEscapeUtils.escapeHtml(longDescription).replaceAll("\\n", "<br>"));
         }
 
         String tooltipString = tooltip.toString();
@@ -108,11 +108,5 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
     private boolean isEmpty(String str) {
         return str == null || str.isEmpty();
-    }
-
-    private String convertToUrl(String fileUri) {
-        String uriPath = fileUri.replaceFirst("^(.*?):", ""); // remove file:
-
-        return "file://" + uriPath;
     }
 }
