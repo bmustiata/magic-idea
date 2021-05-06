@@ -26,7 +26,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
         updateIcon(item);
 
         String htmlLabel = updateTreeLabel(item);
-        updateToolTip(item);
+        updateToolTip(item.getTreeItem());
 
         return super.getTreeCellRendererComponent(
                 tree, htmlLabel, sel, expanded, leaf, row, hasFocus);
@@ -96,8 +96,19 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
     private void updateToolTip(TreeItem item) {
         StringBuilder tooltip = new StringBuilder();
 
+        if (item instanceof SourceReference) {
+            tooltip.append("<b>")
+                    .append(StringEscapeUtils.escapeHtml(((SourceReference) item).getUrl()))
+                    .append("</b>")
+                    .append("<br><br>");
+        }
+
         if (!isEmpty(item.getDescription())) {
-            tooltip.append(item.getDescription());
+            tooltip.append(item.getDescription(), 0, 20);
+
+            if (item.getDescription().length() > 20) {
+                tooltip.append("...");
+            }
         }
 
         String longDescription = item.getLongDescription();
