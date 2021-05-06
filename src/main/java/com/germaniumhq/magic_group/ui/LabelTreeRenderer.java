@@ -25,11 +25,26 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
         MgTreeNode<? extends TreeItem> item = (MgTreeNode<? extends TreeItem>) value;
         updateIcon(item);
 
+        String htmlLabel = updateTreeLabel(item);
+        updateToolTip(item);
+
+        return super.getTreeCellRendererComponent(
+                tree, htmlLabel, sel, expanded, leaf, row, hasFocus);
+    }
+
+    @NotNull
+    private String updateTreeLabel(MgTreeNode<? extends TreeItem> item) {
+        String itemName = item.getName();
+
+        if (item.getTreeItem() instanceof SourceReference) {
+            itemName = itemName.replaceAll("^.*[/\\\\]", "");
+        }
+
         StringBuilder html = new StringBuilder("<html>")
             .append(
                 String.format(
                     "%s",
-                    StringEscapeUtils.escapeHtml(item.getName())
+                    StringEscapeUtils.escapeHtml(itemName)
                 )
             );
 
@@ -41,10 +56,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
 
         html.append("</html>");
 
-        updateToolTip(item);
-
-        return super.getTreeCellRendererComponent(
-                tree, html.toString(), sel, expanded, leaf, row, hasFocus);
+        return html.toString();
     }
 
     private void updateIcon(MgTreeNode<? extends TreeItem> item) {
