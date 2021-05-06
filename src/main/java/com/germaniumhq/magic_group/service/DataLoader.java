@@ -7,7 +7,6 @@ import com.germaniumhq.magic_group.model.TreeItem;
 import com.germaniumhq.magic_group.ui.MgTreeNode;
 
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import java.util.*;
 
 public class DataLoader {
@@ -182,5 +181,31 @@ public class DataLoader {
 
     public void setTreeModel(DefaultTreeModel treeModel) {
         this.treeModel = treeModel;
+    }
+
+    public void updateItem(MgTreeNode<? extends TreeItem> selectedTreeItem,
+                           String name,
+                           String description,
+                           String longDescription) {
+        if (selectedTreeItem.getTreeItem() instanceof Group) {
+            Group group = (Group) selectedTreeItem.getTreeItem();
+
+            group.setName(name);
+            group.setDescription(description);
+            group.setLongDescription(longDescription);
+        } else if (selectedTreeItem.getTreeItem() instanceof SourceReference) {
+            SourceReference sourceReference = (SourceReference) selectedTreeItem.getTreeItem();
+
+            sourceReference.setDescription(description);
+            sourceReference.setLongDescription(longDescription);
+        } else if (selectedTreeItem.getTreeItem() instanceof LineReference) {
+            LineReference lineReference = (LineReference) selectedTreeItem.getTreeItem();
+
+            lineReference.setExpression(name);
+            lineReference.setDescription(description);
+            lineReference.setLongDescription(longDescription);
+        }
+
+        treeModel.nodeChanged(selectedTreeItem);
     }
 }

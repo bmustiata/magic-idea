@@ -9,7 +9,6 @@ import com.germaniumhq.magic_group.service.ModelSerializer;
 import com.germaniumhq.magic_group.ui.dnd.MagicGroupTransferHandler;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -124,6 +123,27 @@ public class MainWindow {
             }
         });
 
+        editButton.addActionListener(actionEvent -> {
+            MgTreeNode<? extends TreeItem> selectedTreeItem = getSelectedTreeItem();
+
+            if (selectedTreeItem.getTreeItem() instanceof Group) {
+                createUpdateEditor("Edit group...", (String name, String description, String longDescription) -> {
+                    DataLoader.INSTANCE.updateItem(selectedTreeItem, name, description, longDescription);
+                });
+            } else if (selectedTreeItem.getTreeItem() instanceof SourceReference) {
+                createUpdateEditor("Edit source reference...", (String description, String longDescription) -> {
+                    DataLoader.INSTANCE.updateItem(selectedTreeItem, null, description, longDescription);
+                });
+            } else if (selectedTreeItem.getTreeItem() instanceof LineReference) {
+                LineReference editedLineReference = (LineReference) selectedTreeItem.getTreeItem();
+                createUpdateEditor("Edit line reference...", (String name, String description, String longDescription) -> {
+                    DataLoader.INSTANCE.updateItem(selectedTreeItem, name, description, longDescription);
+                });
+            } else {
+                throw new IllegalArgumentException("Unknown item type " + selectedTreeItem);
+            }
+        });
+
         removeButton.addActionListener(actionEvent -> {
             DataLoader.INSTANCE.remove(getSelectedTreeItem());
         });
@@ -131,9 +151,29 @@ public class MainWindow {
         ToolTipManager.sharedInstance().registerComponent(itemTree);
     }
 
-    private void createEntryEditor(String title, EntryEditor.Action okAction) {
+    private void createEntryEditor(String title, EntryEditor.NameDescLongDescAction okNameDescLongDescAction) {
         EntryEditor entryEditor = createEntryEditor(title);
-        entryEditor.onOk(okAction);
+        entryEditor.onOk(okNameDescLongDescAction);
+        entryEditor.setVisible(true);
+    }
+
+    private void createUpdateEditor(String title, EntryEditor.NameDescLongDescAction okNameDescLongDescAction) {
+        EntryEditor entryEditor = createEntryEditor(title);
+
+        MgTreeNode<? extends TreeItem> selectedTreeItem = getSelectedTreeItem();
+        entryEditor.setInitialData(selectedTreeItem);
+
+        entryEditor.onOk(okNameDescLongDescAction);
+        entryEditor.setVisible(true);
+    }
+
+    private void createUpdateEditor(String title, EntryEditor.DescLongDescAction okDescLongDescAction) {
+        EntryEditor entryEditor = createEntryEditor(title);
+
+        MgTreeNode<? extends TreeItem> selectedTreeItem = getSelectedTreeItem();
+        entryEditor.setInitialData(selectedTreeItem);
+
+        entryEditor.onOk(okDescLongDescAction);
         entryEditor.setVisible(true);
     }
 
