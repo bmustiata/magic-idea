@@ -8,8 +8,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.Navigatable;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class FileOpener {
     public static <T extends TreeItem> void openFile(@NotNull Project project, MgTreeNode<T> selectedTreeItem) {
@@ -18,20 +22,36 @@ public class FileOpener {
 
         if (selectedTreeItem.getTreeItem() instanceof SourceReference) {
             sourceReference = (SourceReference) selectedTreeItem.getTreeItem();
-            line = 0;
         } else {
             sourceReference = ((MgTreeNode<SourceReference>) selectedTreeItem.getParent()).getTreeItem();
-            line = findLine(selectedTreeItem);
         }
 
         @Nullable VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(sourceReference.getUrl());
+
+        line = selectedTreeItem.getTreeItem() instanceof SourceReference ? 0 : findLine(file, selectedTreeItem);
 
         @NotNull Navigatable item = new OpenFileDescriptor(project, file, line, 0);
         item.navigate( true);
     }
 
-    private static <T extends TreeItem> int findLine(MgTreeNode<T> selectedTreeItem) {
-        int userLine = Integer.parseInt(((LineReference) selectedTreeItem.getTreeItem()).getExpression());
+    @SneakyThrows
+    private static <T extends TreeItem> int findLine(VirtualFile file, MgTreeNode<T> selectedTreeItem) {
+        int userLine;
+        LineReference lineReference = (LineReference) selectedTreeItem.getTreeItem();
+
+        try {
+            userLine = Integer.parseInt(lineReference.getExpression());
+        } catch (NumberFormatException e) {
+            userLine = 1;
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), "utf-8"))) {
+                String line = reader.readLine();
+                while (line != null && !line.contains(lineReference.getExpression())) {
+                    userLine++;
+                    line = reader.readLine();
+                }
+            }
+        }
 
         return userLine - 1;
     }
