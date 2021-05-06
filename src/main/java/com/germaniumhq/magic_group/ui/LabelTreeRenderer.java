@@ -40,13 +40,23 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
             itemName = itemName.replaceAll("^.*[/\\\\]", "");
         }
 
-        StringBuilder html = new StringBuilder("<html>")
-            .append(
-                String.format(
-                    "%s",
-                    StringEscapeUtils.escapeHtml(itemName)
-                )
+        StringBuilder html = new StringBuilder("<html>");
+
+        if (item.getParent() == null) {
+            html.append(
+                    String.format(
+                            "<i>%s</i>",
+                            StringEscapeUtils.escapeHtml(itemName)
+                    )
             );
+        } else {
+            html.append(
+                    String.format(
+                            "%s",
+                            StringEscapeUtils.escapeHtml(itemName)
+                    )
+            );
+        }
 
         if (!isEmpty(item.getDescription())) {
             html.append("<span style='color: #cccccc'>&nbsp;-&nbsp;")
@@ -60,6 +70,11 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
     }
 
     private void updateIcon(MgTreeNode<? extends TreeItem> item) {
+        if (item.getParent() == null) {
+            setAllIcons(IconLoader.findIcon("nodes/homeFolder.svg"));
+            return;
+        }
+
         if (item.getTreeItem() instanceof SourceReference) {
             String fileUri = ((SourceReference)item.getTreeItem()).getUrl();
             setAllIcons(findIconForResource(fileUri));
