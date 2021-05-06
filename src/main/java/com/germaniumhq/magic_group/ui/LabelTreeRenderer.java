@@ -8,7 +8,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.IconUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,12 +54,7 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
         } else if (item.getTreeItem() instanceof Group) {
             setAllIcons(IconLoader.findIcon("nodes/folder.svg"));
         } else if (item.getTreeItem() instanceof LineReference) {
-            LineReference lineReference = (LineReference) item.getTreeItem();
-
-            Icon lineLocationIcon = IconLoader.findIcon("general/arrowRight.svg");
-            Icon annotatedIcon = IconUtil.addText(lineLocationIcon, lineReference.getExpression());
-
-            setAllIcons(annotatedIcon);
+            setAllIcons(IconLoader.findIcon("general/arrowRight.svg"));
         }
     }
 
