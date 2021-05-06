@@ -21,11 +21,9 @@ import java.awt.event.MouseEvent;
 public class MainWindow {
     private JTree itemTree;
     private JPanel rootPanel;
-    private JTextField searchTextField;
     private JButton newButton;
     private JButton editButton;
     private JButton removeButton;
-    private JButton findButton;
     private JTextField descriptionTextField;
     private JEditorPane longDescriptionEditorPane;
 
