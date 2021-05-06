@@ -15,7 +15,6 @@ repositories {
 
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.16'
-    implementation 'org.yaml:snakeyaml:1.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")

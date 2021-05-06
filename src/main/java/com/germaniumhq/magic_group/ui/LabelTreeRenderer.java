@@ -104,10 +104,11 @@ public class LabelTreeRenderer extends DefaultTreeCellRenderer {
         }
 
         if (!isEmpty(item.getDescription())) {
-            tooltip.append(item.getDescription(), 0, 20);
-
             if (item.getDescription().length() > 20) {
+                tooltip.append(item.getDescription(), 0, 20);
                 tooltip.append("...");
+            } else {
+                tooltip.append(item.getDescription());
             }
         }
 
